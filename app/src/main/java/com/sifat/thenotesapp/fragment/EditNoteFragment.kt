@@ -3,17 +3,99 @@ package com.sifat.thenotesapp.fragment
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
+import com.sifat.thenotesapp.MainActivity
 import com.sifat.thenotesapp.R
+import com.sifat.thenotesapp.databinding.FragmentEditNoteBinding
+import com.sifat.thenotesapp.model.Note
+import com.sifat.thenotesapp.viewModel.NoteViewModel
 
 
-class EditNoteFragment : Fragment() {
+class EditNoteFragment : Fragment(R.layout.fragment_edit_note), MenuProvider{
+    private var editNoteBinding : FragmentEditNoteBinding? = null
+    private val binding get() = editNoteBinding!!
+
+    private lateinit var notesViewModel: NoteViewModel
+    private lateinit var currentNote: Note
+
+    private val args: EditNoteFragmentArgs by navArgs()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_edit_note, container, false)
+        editNoteBinding = FragmentEditNoteBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        notesViewModel = (activity as MainActivity).noteViewModel
+        currentNote = args.note!!
+
+        // Null-safe check for noteTitle and notDesc
+        binding.editNoteTitle.setText(currentNote.noteTitle ?: "")
+        binding.editNoteDesc.setText(currentNote.notDesc ?: "")
+
+        binding.editNoteFab.setOnClickListener {
+            val editTitle = binding.editNoteTitle.text.toString().trim()
+            val editContent = binding.editNoteDesc.text.toString().trim()
+
+            if (editTitle.isNotEmpty()) {
+                val note = Note(currentNote.id, editTitle, editContent)
+                notesViewModel.updateNote(note)
+                view.findNavController().popBackStack(R.id.homeFragment, false)
+            } else {
+                Toast.makeText(context, "Please Enter Note Title", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun deleteNote(){
+        AlertDialog.Builder(requireActivity()).apply {
+            setTitle("Delete Note")
+            setMessage("Do You want to delete this Note?")
+            setPositiveButton("Delete"){_,_ ->
+                notesViewModel.deleteNote(currentNote)
+                Toast.makeText(context, "Please Enter Note Title", Toast.LENGTH_SHORT).show()
+                view?.findNavController()?.popBackStack(R.id.homeFragment, false)
+            }
+            setNegativeButton("Cancel", null)
+        }.create().show()
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menu.clear()
+        menuInflater.inflate(R.menu.menu_edit_note, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return when(menuItem.itemId){
+            R.id.deleteMenu -> {
+                deleteNote()
+                true
+            } else -> false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        editNoteBinding = null
+    }
 
 }
