@@ -21,17 +21,13 @@ import com.sifat.thenotesapp.databinding.FragmentEditNoteBinding
 import com.sifat.thenotesapp.model.Note
 import com.sifat.thenotesapp.viewModel.NoteViewModel
 
-
-class EditNoteFragment : Fragment(R.layout.fragment_edit_note), MenuProvider{
-    private var editNoteBinding : FragmentEditNoteBinding? = null
+class EditNoteFragment : Fragment(R.layout.fragment_edit_note), MenuProvider {
+    private var editNoteBinding: FragmentEditNoteBinding? = null
     private val binding get() = editNoteBinding!!
 
     private lateinit var notesViewModel: NoteViewModel
     private lateinit var currentNote: Note
-
     private val args: EditNoteFragmentArgs by navArgs()
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -66,13 +62,13 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note), MenuProvider{
         }
     }
 
-    private fun deleteNote(){
+    private fun deleteNote() {
         AlertDialog.Builder(requireActivity()).apply {
             setTitle("Delete Note")
             setMessage("Do You want to delete this Note?")
-            setPositiveButton("Delete"){_,_ ->
+            setPositiveButton("Delete") { _, _ ->
                 notesViewModel.deleteNote(currentNote)
-                Toast.makeText(context, "Please Enter Note Title", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Note Deleted", Toast.LENGTH_SHORT).show() // সঠিক বার্তা
                 view?.findNavController()?.popBackStack(R.id.homeFragment, false)
             }
             setNegativeButton("Cancel", null)
@@ -85,11 +81,12 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note), MenuProvider{
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return when(menuItem.itemId){
+        return when (menuItem.itemId) {
             R.id.deleteMenu -> {
                 deleteNote()
                 true
-            } else -> false
+            }
+            else -> false
         }
     }
 
@@ -97,5 +94,4 @@ class EditNoteFragment : Fragment(R.layout.fragment_edit_note), MenuProvider{
         super.onDestroy()
         editNoteBinding = null
     }
-
 }

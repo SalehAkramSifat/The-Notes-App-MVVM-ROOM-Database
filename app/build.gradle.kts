@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.sifat.thenotesapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.sifat.thenotesapp"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -75,4 +75,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     // Annotation processor
     ksp(libs.androidx.lifecycle.compiler)
+    implementation (libs.androidx.constraintlayout.v211)
 }
