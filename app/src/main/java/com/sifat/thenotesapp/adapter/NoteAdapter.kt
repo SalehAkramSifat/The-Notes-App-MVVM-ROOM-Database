@@ -40,8 +40,8 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val currentNote = differ.currentList[position]
 
-        holder.itembinding.noteTitle.text = currentNote.noteTitle
-        holder.itembinding.noteDesc.text = currentNote.notDesc
+        holder.itembinding.noteTitle.text = currentNote.noteTitle?: "No Title"
+        holder.itembinding.noteDesc.text = currentNote.notDesc?: "No Description"
 
         holder.itemView.setOnClickListener {
             val direction = HomeFragmentDirections.actionHomeFragmentToEditNoteFragment(currentNote)

@@ -22,9 +22,10 @@ class MainActivity : AppCompatActivity() {
 
         setUpViewModel()
     }
+
     private fun setUpViewModel(){
-        val NoteRepository = NoteRepository(NoteDatabase(this))
-        val viewModelProviderFactory = NoteViewModelFactory(application, NoteRepository)
+        val noteRepository = NoteRepository(NoteDatabase.getInstance(this)) // সিঙ্গেলটন ইনস্ট্যান্স
+        val viewModelProviderFactory = NoteViewModelFactory(application, noteRepository)
         noteViewModel = ViewModelProvider(this, viewModelProviderFactory)[NoteViewModel::class.java]
     }
 }

@@ -9,12 +9,13 @@ import com.sifat.thenotesapp.model.Note
 import com.sifat.thenotesapp.repesitory.NoteRepository
 import kotlinx.coroutines.launch
 
-class NoteViewModel(app:Application, private val noteRepository: NoteRepository):AndroidViewModel(app) {
+class NoteViewModel(app: Application, private val noteRepository: NoteRepository) : AndroidViewModel(app) {
 
     fun addNote(note: Note) =
         viewModelScope.launch {
             noteRepository.insertNote(note)
         }
+
     fun deleteNote(note: Note) =
         viewModelScope.launch {
             noteRepository.deleteNote(note)
@@ -28,5 +29,4 @@ class NoteViewModel(app:Application, private val noteRepository: NoteRepository)
     fun getAllNotes() = noteRepository.getAllNotes()
     fun searchNotes(query: String?) =
         noteRepository.searchNote(query)
-
 }
